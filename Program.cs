@@ -40,7 +40,16 @@
                     Console.WriteLine("");
                     Console.WriteLine("==========");
                     Console.WriteLine("");
-                    Console.WriteLine(markov.generateSentence());
+
+                    var tweetText = markov.generateSentence();
+                    if(tweetText.Length > 140){
+                        tweetText = tweetText.Substring(0, tweetText.LastIndexOf(' ', 140));
+                    }
+                    Console.WriteLine(tweetText);
+
+                    var formData = new List<KeyValuePair<string, string>>();
+                    var tweetResponse = await client.PostAsync($"/1.1/statuses/update.json?status={WebUtility.UrlEncode(tweetText)}", new FormUrlEncodedContent(formData));
+                    tweetResponse.EnsureSuccessStatusCode();
                 }
             }).Wait();
         }
